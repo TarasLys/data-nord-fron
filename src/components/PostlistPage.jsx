@@ -1,3 +1,7 @@
+
+
+
+
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import emailjs from "emailjs-com";
@@ -41,38 +45,92 @@ const PostlistPage = () => {
     }
   };
 
+
+
+
+const formatRowsToHTML = (rows) => {
+  return rows
+    .map(
+      (row) =>
+        `<tr>
+          <td style="border: 1px solid #eaeaea; padding: 8px;">${row.date}</td>
+          <td style="border: 1px solid #eaeaea; padding: 8px;">${row.title.replace(/\n/g, "<br>")}</td>
+          <td style="border: 1px solid #eaeaea; padding: 8px;">${row.unit}</td>
+          <td style="border: 1px solid #eaeaea; padding: 8px;">
+            <a href="${row.archiveLink}" style="text-decoration: none; color: #007bff;">Arkiv</a>
+          </td>
+        </tr>`
+    )
+    .join(""); // Combine rows into a single HTML string
+};
+
+const sendEmail = async (entriesToSend) => {
+  if (entriesToSend.length === 0) {
+    setEmailStatus("Ingen data tilgjengelig for sending."); // No data available for sending
+    return;
+  }
+
+  try {
+    const formattedRows = formatRowsToHTML(entriesToSend);
+
+    await emailjs.send(
+      import.meta.env.VITE_EMAIL_SERVICE_ID,
+      import.meta.env.VITE_EMAIL_TEMPLATE_ID,
+      {
+        to_email: import.meta.env.VITE_TO_EMAIL,
+        email: import.meta.env.VITE_FROM_EMAIL,
+        rows: formattedRows, // Pass the raw HTML string here
+      },
+      import.meta.env.VITE_EMAIL_USER_ID
+    );
+
+    setEmailStatus("E-posten ble sendt!"); // Email sent successfully
+  } catch (error) {
+    setEmailStatus(`Feil ved sending av e-post: ${error.message || "Ukjent feil"}`); // Error during email sending
+  }
+};
+
+
+
+
+
+
+
+
+
+
   // Funksjon for å sende e-post
-  const sendEmail = async (entriesToSend) => {
-    if (entriesToSend.length === 0) {
-      setEmailStatus("Ingen data tilgjengelig for sending."); // Нет данных для отправки
-      return;
-    }
+  // const sendEmail = async (entriesToSend) => {
+  //   if (entriesToSend.length === 0) {
+  //     setEmailStatus("Ingen data tilgjengelig for sending."); // Нет данных для отправки
+  //     return;
+  //   }
 
-    try {
-      const records = entriesToSend
-        .map(
-          (entry) =>
-            `Dato: ${entry.date}\nTittel: ${entry.title}\nAnsvarlig enhet: ${entry.unit}\n` +
-            `Arkivlenke: ${entry.archiveLink || "Ikke oppgitt"}`
-        )
-        .join("\n");
+  //   try {
+  //     const records = entriesToSend
+  //       .map(
+  //         (entry) =>
+  //           `Dato: ${entry.date}\nTittel: ${entry.title}\nAnsvarlig enhet: ${entry.unit}\n` +
+  //           `Arkivlenke: ${entry.archiveLink || "Ikke oppgitt"}`
+  //       )
+  //       .join("\n");
 
-      await emailjs.send(
-        import.meta.env.VITE_EMAIL_SERVICE_ID,
-        import.meta.env.VITE_EMAIL_TEMPLATE_ID,
-        {
-          to_email: import.meta.env.VITE_TO_EMAIL,
-          email: import.meta.env.VITE_FROM_EMAIL,
-          records,
-        },
-        import.meta.env.VITE_EMAIL_USER_ID
-      );
+  //     await emailjs.send(
+  //       import.meta.env.VITE_EMAIL_SERVICE_ID,
+  //       import.meta.env.VITE_EMAIL_TEMPLATE_ID,
+  //       {
+  //         to_email: import.meta.env.VITE_TO_EMAIL,
+  //         email: import.meta.env.VITE_FROM_EMAIL,
+  //         records,
+  //       },
+  //       import.meta.env.VITE_EMAIL_USER_ID
+  //     );
 
-      setEmailStatus("E-posten ble sendt!"); // Письмо успешно отправлено
-    } catch (error) {
-      setEmailStatus(`Feil ved sending av e-post: ${error.text || "Ukjent feil"}`); // Ошибка при отправке письма
-    }
-  };
+  //     setEmailStatus("E-posten ble sendt!"); // Письмо успешно отправлено
+  //   } catch (error) {
+  //     setEmailStatus(`Feil ved sending av e-post: ${error.text || "Ukjent feil"}`); // Ошибка при отправке письма
+  //   }
+  // };
 
   useEffect(() => {
     // Første spørring ved komponentinnlasting
