@@ -1,15 +1,56 @@
+
+
 {
   "name": "data-nord-fron",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "main.js",
+  "build": {
+    "appId": "com.yourcompany.yourapp",
+    "productName": "Posttjenester Åge-Haverstad",
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "server.js",
+      "src/scripts/*.js",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "server.js",
+      "src/scripts/*.js",
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules",
+        "to": "node_modules"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": ["dmg", "zip"]
+    },
+    "nsis": {
+      "runAfterFinish": false
+    }
+  },
   "scripts": {
+    "start-electron": "electron .",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "electron-builder install-app-deps",
+    "dist": "npm run build && electron-builder"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "axios": "^1.8.4",
     "cheerio": "^1.0.0",
     "cors": "^2.8.5",
@@ -28,6 +69,8 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^35.1.5",
+    "electron-builder": "^26.0.12",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
@@ -35,3 +78,8 @@
     "vite": "^6.2.0"
   }
 }
+
+
+
+
+

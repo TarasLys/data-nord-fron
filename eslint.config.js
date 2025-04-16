@@ -5,6 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
   { ignores: ['dist'] },
+  // Браузерный (frontend) код
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -28,6 +29,33 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+    },
+  },
+  // Node.js (backend, Electron main process)
+  {
+    files: [
+      'server.js',
+      'main.js',
+      '**/*.cjs',
+      '**/*.mjs',
+      '**/*.node.js',
+      '**/electron-main/**/*.{js,mjs}',
+      '**/backend/**/*.{js,mjs}',
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,
+        ...globals.es2021,
+      },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      // Можно добавить специфичные правила для Node.js, если нужно
     },
   },
 ]
